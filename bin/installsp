@@ -61,7 +61,7 @@ else
 fi
 
 # Move and install package
-if [ -f "$sploc$sbname" ]; then 
+if [ -f "$sploc$spname" ]; then 
     if [ -d "$mvloc" ]; then
         mv "$sploc$spname" "$mvloc$spname"
     else
