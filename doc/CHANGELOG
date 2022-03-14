@@ -1,3 +1,8 @@
+Unreleased:
+
+    - Moved binary to /usr/sbin.
+    - Fixed typos in LICENSE_SHORT and help.txt.
+
 0.1.0, 2022-03-13:
 
     - Initial program creation. (Murdo Maclachlan)
