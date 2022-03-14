@@ -17,8 +17,8 @@ Optionally, you may pass a custom location to move the package to:
 If no location is passed, installsp will default to the location
 specificied by the value of $repository in the config file.
 
-By default, installsp looks for your package in /tmp/; this can be
-changed by changing the value of $sbloc in the config file. The
+By default, installsp looks for your package in /tmp; this can be
+changed by changing the value of $sploc in the config file. The
 package name should always be passed as a file name only, ignoring
 its parent directories, which should be specified in this config
 value.
@@ -29,7 +29,7 @@ The config file can be found at:
 
 There are several arguments that can be passed to installsp for
 information. They will cause it to exit without installing or
-moving in packages, but will provide details about the program
+moving any packages, but will provide details about the program
 itself.
 
     -h, --help:    display this menu
