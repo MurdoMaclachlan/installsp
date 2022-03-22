@@ -45,8 +45,16 @@ fi
 # shellcheck source=/dev/null
 source "/usr/share/installsp/config.sh"
 
-# Read package name from args
-if [[ $1 ]]; then
+# Check if to upgrade an existing package
+[ "$1" = "-u" ] && upgrade=1 || [ "$1" = "--upgrade" ] && upgrade=1
+
+if [[ $upgrade && $2 && $3 ]]; then
+    spname=$3
+    oldp=$2
+elif [[ $upgrade ]]; then
+    echo "installsp: --upgrade passed, but either package name or location of new version unspecified. Run 'installsp --help' for details."
+    exit 0
+elif [[ $1 ]]; then
     spname=$1
 else
     echo "installsp: No package specified, exiting. Run 'installsp --help' for details."
@@ -54,7 +62,9 @@ else
 fi
 
 # Read repository location from args or fall back to default from config
-if [[ $2 ]]; then
+if [[ $upgrade && $4 ]]; then
+    mvloc=$4
+elif [[ ! $upgrade && $2 ]]; then
     mvloc=$2
 else
     mvloc=$repository
@@ -67,8 +77,12 @@ if [ -f "$sploc$spname" ]; then
     else
         echo "installsp: Could not find directory '$mvloc', not moving package. Will still install."
     fi
-    installpkg "$mvloc$spname"
-    echo "installsp: Moved and installed package: $spname"
+    if [[ $upgrade ]]; then
+        upgradepkg "$oldp" "$mvloc$spname" && echo "installsp: Upgraded package '$oldp' with '$spname'" || echo "installsp: Failed to upgrade package '$oldp' with '$spname'"
+    else
+        installpkg "$mvloc$spname"
+        echo "installsp: Moved and installed package '$spname'"
+    fi
     exit 1
 else
     echo "installsp: Could not find package at: $sploc$spname"
