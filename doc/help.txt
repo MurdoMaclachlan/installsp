@@ -23,6 +23,16 @@ package name should always be passed as a file name only, ignoring
 its parent directories, which should be specified in this config
 value.
 
+You can also upgrade an existing package, like so:
+
+    installsp --upgrade [package name] [new version location]
+
+'-u' can be used in the place of '--upgrade', and a custom
+location for where to move the package may still be used. The
+package name here should be just the name of the library, e.g.
+"installsp", whereas the new version is a filename, e.g.
+"installsp-0.1.0.tar.gz".
+
 The config file can be found at:
     
     /usr/doc/installsp/config.sh
