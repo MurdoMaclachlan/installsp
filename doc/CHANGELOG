@@ -1,5 +1,6 @@
 Unreleased:
 
+    - Added ability to upgrade existing packages.
     - Moved binary to /usr/sbin.
     - Fixed typos in LICENSE_SHORT and help.txt.
 
