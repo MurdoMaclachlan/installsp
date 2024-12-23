@@ -1,8 +1,23 @@
-Unreleased:
+1.0.0 (2024-12-23)
 
-    - Moved binary to /usr/sbin.
-    - Fixed typos in LICENSE_SHORT and help.txt.
+    Changes
+        Added ability to upgrade existing packages using -u
+        Restructured command-line syntax
+        Better argument processing:
+            Require -p before package name
+            Allow custom repository to overwrite config using -r
+            Print usage if required argument missing or unknown argument given
+        Re-wrote help documentation:
+            Reformat for better consistency with common Unix help documents
+            Use standard syntax for program usage
+            Provide explanation for all available arguments
+        Moved binary to /usr/sbin.
+    Contributors
+        Murdo Maclachlan
 
-0.1.0, 2022-03-13:
+0.1.0 (2022-03-13)
 
-    - Initial program creation. (Murdo Maclachlan)
+    Changes
+        Initial program creation.
+    Contributors
+        Murdo Maclachlan

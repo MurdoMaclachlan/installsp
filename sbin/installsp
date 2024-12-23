@@ -9,68 +9,76 @@
 #
 # For more information, see /usr/doc/installsp/LICENSE or creativecommons.org.
 
-version=0.1.0
-
-# Adapted from StackOverflow; credit to Oriettaxx and Romário. URL:
-# https://stackoverflow.com/questions/8063228/check-if-a-variable-exists-in-a-list-in-bash/20473191#20473191
-function list_contains {
-    if [[ $1 =~ (^|[[:space:]])"$2"($|[[:space:]]) ]]; then
-        return 0
-    else
-        return 1
-    fi
-}
-
-list_contains "$@" "-h" && help=1 || list_contains "$@" "--help" && help=1
-list_contains "$@" "-l" && license=1 || list_contains "$@" "--license" && license=1
-list_contains "$@" "-v" && call_version=1 || list_contains "$@" "--version" && call_version=1
-
-# Show help menu / license / version
-if [[ $help ]]; then
-    help_text=$(< /usr/doc/installsp/help.txt)
-    IFS='%'
-    echo -e "$help_text"
-    exit 1
-elif [[ $license ]]; then
-    license_text=$(< /usr/doc/installsp/LICENSE_SHORT)
-    IFS='%'
-    echo -e "$license_text"
-    exit 1
-elif [[ $call_version ]]; then
-    echo "installsp: Version: $version"
-    exit 1
-fi
+USAGE="Usage: installsp [-hlv] -p package [-u library_to_upgrade] [-r repository]"
+VERSION="0.2.0-beta"
 
 # Import config options
-# shellcheck source=/dev/null
 source "/usr/share/installsp/config.sh"
 
-# Read package name from args
-if [[ $1 ]]; then
-    spname=$1
-else
-    echo "installsp: No package specified, exiting. Run 'installsp --help' for details."
-    exit 0
-fi
+while getopts ':hlvp:r:u:' OPTION; do
+    case "$OPTION" in
+        h)
+            HELP=`< /usr/doc/installsp/help.txt`
+            IFS='%'
+            echo -e $HELP
+            exit 1
+            ;;
+        l)
+            LICENSE=`< /usr/doc/installsp/LICENSE_SHORT`
+            IFS='%'
+            echo -e $LICENSE
+            exit 1
+            ;;
+        p)
+            PACKAGE_NAME="$OPTARG"
+            ;;
+        r)
+            REPOSITORY="$OPTARG"
+            ;;
+        u)
+            UPGRADE="$OPTARG"
+            ;;
+        v)
+            echo "installsp $VERSION"
+            exit 1
+            ;;
+        ?)
+            echo $USAGE
+            exit 1
+            ;;
+    esac
+done
 
-# Read repository location from args or fall back to default from config
-if [[ $2 ]]; then
-    mvloc=$2
-else
-    mvloc=$repository
-fi
-
-# Move and install package
-if [ -f "$sploc$spname" ]; then 
-    if [ -d "$mvloc" ]; then
-        mv "$sploc$spname" "$mvloc$spname"
-    else
-        echo "installsp: Could not find directory '$mvloc', not moving package. Will still install."
-    fi
-    installpkg "$mvloc$spname"
-    echo "installsp: Moved and installed package: $spname"
+if [[ -z "$PACKAGE_NAME" ]]; then
+    echo "[installsp] No package provided for installation"
+    echo $USAGE
     exit 1
+fi
+
+if [[ -f "$PACKAGE_LOCATION/$PACKAGE_NAME" ]]; then 
+
+    if [[ -n "$REPOSITORY" ]]; then 
+        if [[ -d "$REPOSITORY" ]]; then
+            mv "$PACKAGE_LOCATION/$PACKAGE_NAME" "$REPOSITORY/$PACKAGE_NAME"
+            echo "[installsp] Moved package to repository at: '$REPOSITORY'"
+            PACKAGE_PATH="$REPOSITORY/$PACKAGE_NAME"
+        else
+            echo "[installsp] Could not find repository at '$REPOSITORY'; not moving package. Will still install."
+            PACKAGE_PATH="$PACKAGE_LOCATION/$PACKAGE_NAME"
+        fi
+    else
+        echo "[installsp] No repository given and no fallback specified in config; not moving package. Will still install."
+        PACKAGE_PATH="$PACKAGE_LOCATION/$PACKAGE_NAME"
+    fi
+
+    if [[ -n "$UPGRADE" ]]; then
+        upgradepkg "$UPGRADE" "$PACKAGE_PATH"
+        echo "[installsp] Upgraded "$UPGRADE" with package: $PACKAGE_NAME"
+    else
+        installpkg "$PACKAGE_PATH"
+        echo "[installsp] Installed package: $PACKAGE_NAME"
+    fi
 else
-    echo "installsp: Could not find package at: $sploc$spname"
-    exit 0
+    echo "[installsp] Could not find package at: $PACKAGE_LOCATION/$PACKAGE_NAME"
+    exit 1
 fi

@@ -1,37 +1,24 @@
-======================INSTALL SLACKPACKAGE========================
+Usage:
+    installsp [-hlv] -p package [-u library_to_upgrade] [-r repository]
 
-This is a program to make it easy to move a newly-built Slackware
-package to your local repository and install it on your system.
+This is a program to make it easy to install a newly-built Slackware package
+and optionally move it to your local repository, if you have one. You can
+also upgrade an existing library by passing its name.
 
-Note that installsp must be run as root, as it installs the
-packages system-wide via installpkg.
+Mandatory arguments:
+    -p <package>        the name of the package file
 
-The basic format of a command looks like this:
+Optional arguments (with values):
+    -r <repository>     the location to move the package file to; if this is
+                        not given, the default path specified in the config
+                        file will be used
+    -u <library>        the name of a library to upgrade using the new
+                        package
 
-    installsp [package name]
+Optional arguments (without values):
+    -h                  display this help and exit
+    -l                  display a short version of the license and exit
+    -v                  display the version number and exit
 
-Optionally, you may pass a custom location to move the package to:
-
-    installsp [package name] [location]
-
-If no location is passed, installsp will default to the location
-specificied by the value of $repository in the config file.
-
-By default, installsp looks for your package in /tmp; this can be
-changed by changing the value of $sploc in the config file. The
-package name should always be passed as a file name only, ignoring
-its parent directories, which should be specified in this config
-value.
-
-The config file can be found at:
-    
-    /usr/doc/installsp/config.sh
-
-There are several arguments that can be passed to installsp for
-information. They will cause it to exit without installing or
-moving any packages, but will provide details about the program
-itself.
-
-    -h, --help:    display this menu
-    -l, --license: display license information
-    -v, --version: display the current version
+installsp can be configured under: /usr/share/installsp/config.sh
+For the full installsp licence, see: /usr/doc/installsp/LICENSE
